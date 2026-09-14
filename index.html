@@ -1306,6 +1306,41 @@
                 navigateTo('home');
             }
         };
+
+        const BIN_ID = '6aa8163bac6210605acc1d53';
+const API_KEY = '$2a$10$rRKw65ZAkBJpeQZsogwQ5.HUnmPcZzlgJh1Iz405npLsRNpLZnqLS';
+
+// Function to send a new booking to the cloud
+async function saveBookingToCloud(newBooking) {
+  // 1. Get current bookings
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+    headers: { 'X-Master-Key': API_KEY }
+  });
+  const data = await res.json();
+  const currentBookings = data.record || [];
+
+  // 2. Add new booking
+  currentBookings.push(newBooking);
+
+  // 3. Save back to cloud
+  await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': API_KEY
+    },
+    body: JSON.stringify(currentBookings)
+  });
+}
+
+// Function for Admin page to load all bookings
+async function loadBookingsFromCloud() {
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+    headers: { 'X-Master-Key': API_KEY }
+  });
+  const data = await res.json();
+  return data.record || [];
+}
     </script>
 </body>
 </html>
